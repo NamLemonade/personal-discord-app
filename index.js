@@ -41,6 +41,8 @@ for (const file of eventFiles) {
 client.login(process.env.DISCORD_TOKEN);
 // client.login(token);
 
+client.user.setActivity('c.S > 2H > [4]6H > 5H > [4]6H > 5H WS > 6[H]');
+
 
 client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isChatInputCommand()) return;
