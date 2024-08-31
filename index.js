@@ -1,7 +1,7 @@
 require('dotenv').config();
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, Events, GatewayIntentBits, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
+const { Client, Collection, Events, GatewayIntentBits, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActivityType } = require('discord.js');
 // const { token } = require('./config.json');
 const { DateTime } = require("luxon");
 
@@ -41,7 +41,32 @@ for (const file of eventFiles) {
 client.login(process.env.DISCORD_TOKEN);
 // client.login(token);
 
-client.user.setActivity('c.S > 2H > [4]6H > 5H > [4]6H > 5H WS > 6[H]');
+client.on("ready", () => {
+	const customStatus = [
+		'TOTSUGEKI!',
+		'c.S > 2H > [4]6H > 5H > [4]6H > 5H WS > 6[H]',
+		"PLeass dont make me code <:3",
+		"La conne de floor 5",
+		"I'd REALLY hate to be the dude that fucks with US!",
+		"Ya think?",
+		"TRAFIK!",
+		"Chat let's kill ROBO-KY.",
+		"Fun-KY!"
+	];
+
+	client.user.setActivity(customStatus[Math.floor(Math.random() * customStatus.length)], {
+		type: ActivityType.Playing
+	});
+
+	client.user.setBanner("./images/kujikawaiiart.png");
+
+
+	setInterval(() => {
+		client.user.setActivity(customStatus[Math.floor(Math.random() * customStatus.length)], {
+			type: ActivityType.Playing
+		});
+	}, 60000);
+});
 
 
 client.on(Events.InteractionCreate, async interaction => {
