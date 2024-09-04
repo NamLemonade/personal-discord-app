@@ -34,7 +34,7 @@ module.exports = {
 
 		const format = interaction.options.getString('format');
 
-        const isoDate = date + "T" + time + "-05:00";
+        const isoDate = date + "T" + time + "-04:00";
 
         // J'ai pas de check pour match à date. Pcq j'men fout un peu.
 

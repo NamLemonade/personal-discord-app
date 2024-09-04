@@ -6,6 +6,6 @@ module.exports = {
 		.setDescription('Replies with Pong!')
 		.setDMPermission(true),
 	async execute(interaction) {
-		await interaction.reply('Pong!');
+		await interaction.reply(`Pong! 🏓Latency is ${Date.now() - interaction.createdTimestamp}ms. API Latency is ${Math.round(interaction.client.ws.ping)}ms`);
 	},
 };

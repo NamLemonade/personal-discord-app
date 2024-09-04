@@ -1,9 +1,11 @@
 require('dotenv').config();
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, Events, GatewayIntentBits, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActivityType } = require('discord.js');
+const { Client, Collection, Events, GatewayIntentBits, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActivityType, EmbedBuilder, hyperlink, time, TimestampStyles  } = require('discord.js');
 // const { token } = require('./config.json');
 const { DateTime } = require("luxon");
+const getYouTubeID = require('get-youtube-id');
+// const youtubeThumb = require('.helpers/youtubeThumbnail.js');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
@@ -58,14 +60,14 @@ client.on("ready", () => {
 		type: ActivityType.Playing
 	});
 
-	client.user.setBanner("./images/kujikawaiiart.png");
+	// client.user.setBanner("./images/kujikawaiiart.png");
 
 
 	setInterval(() => {
 		client.user.setActivity(customStatus[Math.floor(Math.random() * customStatus.length)], {
 			type: ActivityType.Playing
 		});
-	}, 60000);
+	}, 1800000);
 });
 
 
@@ -145,30 +147,53 @@ client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isModalSubmit()) return;
 	if (interaction.customId === 'NintendoDirect') {
 		const date = interaction.fields.getTextInputValue('dateInput');
-		const time = interaction.fields.getTextInputValue('timeInput');
+		const fetchTime = interaction.fields.getTextInputValue('timeInput');
 		const title = interaction.fields.getTextInputValue('titleInput');
 		const description = interaction.fields.getTextInputValue('descriptionInput');
 		const youtube = interaction.fields.getTextInputValue('youtubeInput');
-		// const twitch = interaction.fields.getTextInputValue('twitchInput');
 
-		let youtubeLink = "";
-		let twitchLink = "";
-
-		if(youtube != "")
-		{
-			youtubeLink = "Youtube: " + youtube;
-		}
-		// if(twitch != "")
-		// {
-		// 	twitchLink = "Twitch: " + twitch;
-		// }
-
-		const isoDate = date + "T" + time + "-05:00";
+		const isoDate = date + "T" + fetchTime + "-04:00";
+		const unixDate = DateTime.fromISO(isoDate).toUnixInteger();
 
         // J'ai pas de check pour match à date. Pcq j'men fout un peu.
 
-        const dateTimeFormatted = DateTime.fromISO(isoDate).toUnixInteger() + ":F";
+		const dateTimeFormatted = time(unixDate, TimestampStyles.LongDateTime);
 
-		await interaction.reply({ content: `<:dolphinblueexcited:1278336644943974412> [ <t:${dateTimeFormatted}> ] ${title}\n\n${description}\n\n${youtubeLink}` });
+		interaction.deferReply();
+		interaction.deleteReply();
+
+		if(youtube != "")
+		{
+			const link = hyperlink('YouTube', youtube);
+			const youtubeId = getYouTubeID(youtube);
+	
+			const bigThumbnail = 'http://img.youtube.com/vi/' + youtubeId + '/0.jpg';
+
+			const nintendoDirectEmbed = new EmbedBuilder()
+				.setColor(0xE60012)
+				.setTitle(title)
+				.setURL(youtube)
+				.setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+				.setDescription(description)
+				.addFields(
+					{ name: 'Date', value: dateTimeFormatted },
+					{ name: 'Link', value: link },
+				)
+				.setImage(bigThumbnail)
+				.setFooter({ text: 'Generated with 🧡 and 🐬 by ROBO-MAY!', iconURL: interaction.client.user.avatarURL() });
+				await interaction.channel.send({ embeds: [nintendoDirectEmbed] });
+		}
+		else{
+			const nintendoDirectEmbed = new EmbedBuilder()
+				.setColor(0xE60012)
+				.setTitle(title)
+				.setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+				.setDescription(description)
+				.addFields(
+					{ name: 'Date', value: dateTimeFormatted },
+				)
+				.setFooter({ text: 'Generated with 🧡 and 🐬 by ROBO-MAY!', iconURL: interaction.client.user.avatarURL() });
+				await interaction.channel.send({ embeds: [nintendoDirectEmbed] });
+		}
 	}
 });
